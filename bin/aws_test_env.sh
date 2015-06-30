@@ -15,6 +15,16 @@ date_now() {
         echo `date +%Y-%m-%dT%H:%M:%S`
 }
 
+getEC2InstanceIdByName() {
+        ec2InstanceName=$1
+        aws ec2 describe-instances --filter "Name=tag:Name,Values=${ec2InstanceName}" | grep InstanceId | grep -oE "i-([0-9a-z]+)"
+}
+
+getEC2PrivateDNSByName() {
+        ec2InstanceName=$1
+        aws ec2 describe-instances --filter "Name=tag:Name,Values=${ec2InstanceName}" | grep PrivateDnsName | head -n 1 | grep -oP "ip-(.*).ec2.internal"
+}
+
 getElbHealthyHostCount() {
         elbIdentifier=$1
         statsMethod=$2
